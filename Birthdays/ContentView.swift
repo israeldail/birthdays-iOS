@@ -10,12 +10,13 @@ import SwiftData
 
 struct ContentView: View {
     // friends will be stored here
-    @Query(sort: \Friend.birthday) private var friends: [Friend]
+    @Query(sort: \Friend.name) private var friends: [Friend]
     // connection between view and model container
     @Environment(\.modelContext) private var context
     
     @State private var newName = ""
     @State private var newDate = Date.now
+    @State private var newNote = ""
     
     var body: some View {
         NavigationStack {
@@ -25,8 +26,13 @@ struct ContentView: View {
                         Image(systemName: "birthday.cake")
                             .foregroundColor(.blue)
                     }
-                    Text(friend.name)
-                        .bold(friend.isBirthdayToday)
+                    VStack {
+                        Text(friend.name)
+                            .bold(friend.isBirthdayToday)
+                        Text(friend.notes)
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                    }
                     Spacer()
                     Text(friend.birthday, format: .dateTime.month(.wide).day().year())
                 }
@@ -41,13 +47,16 @@ struct ContentView: View {
                         TextField("Name", text: $newName)
                             .textFieldStyle(.roundedBorder)
                     }
+                    TextField("Notes", text: $newNote)
+                        .textFieldStyle(.roundedBorder)
                     Button("Save") {
-                        let newFriend = Friend(name: newName, birthday: newDate)
+                        let newFriend = Friend(name: newName, birthday: newDate, notes: newNote)
                         // insert into swiftdata via context
                         context.insert(newFriend)
                         // reset name and date after input is saved
                         newName = ""
                         newDate = Date.now
+                        newNote = ""
                     }
                     .bold()
                 }

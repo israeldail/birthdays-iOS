@@ -13,10 +13,12 @@ import SwiftData
 class Friend {
     var name: String
     var birthday: Date
+    var notes: String
     
-    init(name: String, birthday: Date) {
+    init(name: String, birthday: Date, notes: String) {
         self.name = name
         self.birthday = birthday
+        self.notes = notes
     }
     // computed variable to detect birthdays dynamically
     var isBirthdayToday: Bool {
