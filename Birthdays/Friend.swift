@@ -18,4 +18,8 @@ class Friend {
         self.name = name
         self.birthday = birthday
     }
+    // computed variable to detect birthdays dynamically
+    var isBirthdayToday: Bool {
+        Calendar.current.isDateInToday(birthday)
+    }
 }

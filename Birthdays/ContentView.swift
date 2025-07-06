@@ -6,21 +6,27 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct ContentView: View {
     // friends will be stored here
-    @State private var friends: [Friend] = [
-        Friend(name: "Israel Dail", birthday: .now),
-        Friend(name: "Naraya Gonzalez", birthday: Date(timeIntervalSince1970: 0)),
-    ]
+    @Query(sort: \Friend.birthday) private var friends: [Friend]
+    // connection between view and model container
+    @Environment(\.modelContext) private var context
+    
     @State private var newName = ""
     @State private var newDate = Date.now
     
     var body: some View {
         NavigationStack {
-            List(friends, id: \.name) { friend in
+            List(friends) { friend in
                 HStack {
+                    if friend.isBirthdayToday {
+                        Image(systemName: "birthday.cake")
+                            .foregroundColor(.blue)
+                    }
                     Text(friend.name)
+                        .bold(friend.isBirthdayToday)
                     Spacer()
                     Text(friend.birthday, format: .dateTime.month(.wide).day().year())
                 }
@@ -37,7 +43,8 @@ struct ContentView: View {
                     }
                     Button("Save") {
                         let newFriend = Friend(name: newName, birthday: newDate)
-                        friends.append(newFriend)
+                        // insert into swiftdata via context
+                        context.insert(newFriend)
                         // reset name and date after input is saved
                         newName = ""
                         newDate = Date.now
@@ -53,4 +60,5 @@ struct ContentView: View {
 
 #Preview {
     ContentView()
+        .modelContainer(for: Friend.self, inMemory: true)
 }
